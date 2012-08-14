@@ -178,9 +178,13 @@ public class MaryCache
     public synchronized void insertText(String inputtype, String outputtype, String locale, String voice, String outputparams, String style, String effects, String inputtext, String outputtext)
     throws SQLException
     {
-        if (inputtype == null || outputtype == null || locale == null || voice == null || inputtext == null || outputtext == null) {
-            throw new NullPointerException("Null argument");
-        }
+        assert inputtype != null;
+        assert outputtype != null;
+        assert locale != null;
+        assert voice != null;
+        assert inputtext != null;
+        assert outputtext != null;
+
         // Need to verify, here in the synchronized code, once again that really we don't have this entry already.
         // If we do, we ignore this call.
         if (lookupText(inputtype, outputtype, locale, voice, outputparams, style, effects, inputtext) != null) {
@@ -189,6 +193,8 @@ public class MaryCache
 
         String query = "INSERT INTO MARYCACHE (inputtype, outputtype, locale, voice, outputparams, style, effects, inputtext, outputtext) VALUES ('"
             +inputtype+"','"+outputtype+"','"+locale+"','"+voice+"','"+outputparams+"','"+style+"','"+effects+"',?,?)";
+
+        System.out.println(query);
 
         PreparedStatement st = connection.prepareStatement(query);
         // We set the input and output text separately because they could contain single quote characters
@@ -232,9 +238,11 @@ public class MaryCache
     public synchronized void insertAudio(String inputtype, String locale, String voice, String outputparams, String style, String effects, String inputtext, byte[] audio)
     throws SQLException
     {
-        if (inputtype == null || locale == null || voice == null || inputtext == null) {
-            throw new NullPointerException("Null argument");
-        }
+        assert inputtype != null;
+        assert locale != null;
+        assert voice != null;
+        assert inputtext != null;
+
         // Need to verify, here in the synchronized code, once again that really we don't have this entry already.
         // If we do, we ignore this call.
         if (lookupAudio(inputtype, locale, voice, outputparams, style, effects, inputtext) != null) {
@@ -285,9 +293,12 @@ public class MaryCache
     public synchronized String lookupText(String inputtype, String outputtype, String locale, String voice, String outputparams, String style, String effects, String inputtext)
     throws SQLException
     {
-        if (inputtype == null || outputtype == null || locale == null || voice == null || inputtext == null) {
-            throw new NullPointerException("Null argument");
-        }
+        assert inputtype != null;
+        assert outputtype != null;
+        assert locale != null;
+        assert voice != null;
+        assert inputtext != null;
+
         String outputtext = null;
         String query = "SELECT outputtext FROM marycache WHERE inputtype = '"+inputtype
             + "' AND outputtype = '"+outputtype

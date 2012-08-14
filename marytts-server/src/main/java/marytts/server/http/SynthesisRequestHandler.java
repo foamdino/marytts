@@ -57,7 +57,7 @@ import org.apache.log4j.Logger;
 public class SynthesisRequestHandler extends BaseHttpRequestHandler
 {
     private static int id = 0;
-    
+
     private static synchronized int getId()
     {
         return id++;

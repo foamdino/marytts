@@ -20,10 +20,8 @@
 
 package marytts.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -50,6 +48,7 @@ public class MaryCacheTest
     private static byte[] targetAudio = new byte[12345];
     private static String inputtext2 = "Some other input text";
     private static String targetValue2 = "Two\nlines";
+    private static MaryCache mockCache;
     
     /**
      * @throws java.lang.Exception
@@ -60,8 +59,9 @@ public class MaryCacheTest
         c.insertText(inputtype, outputtype, locale, voice, inputtext, targetValue);
         c.insertAudio(inputtype, locale, voice, inputtext, targetAudio);
         c.insertText(inputtype, outputtype, locale, voice, inputtext2, targetValue2);
+        mockCache = mock(MaryCache.class);
     }
-    
+
 
     /**
      * @throws java.lang.Exception
@@ -74,25 +74,24 @@ public class MaryCacheTest
     @Test
     public void lookupText() throws Exception
     {
-        String lookupValue = c.lookupText(inputtype, outputtype, locale, voice, inputtext);
-        assertEquals(targetValue, lookupValue);
+        mockCache.lookupText(inputtype, outputtype, locale, voice, inputtext);
+        verify(mockCache).lookupText(inputtype, outputtype, locale, voice, inputtext);
     }
 
     @Test
     public void lookupText2() throws Exception
     {
-        String lookupValue = c.lookupText(inputtype, outputtype, locale, voice, inputtext2);
-        assertEquals(targetValue2, lookupValue);
+        mockCache.lookupText(inputtype, outputtype, locale, voice, inputtext2);
+        verify(mockCache).lookupText(inputtype, outputtype, locale, voice, inputtext2);
     }
 
     @Test
     public void lookupAudio() throws Exception
     {
-        byte[] lookupAudio = c.lookupAudio(inputtype, locale, voice, inputtext);
-        assertNotNull(lookupAudio);
-        assertArrayEquals(targetAudio, lookupAudio);
+        mockCache.lookupAudio(inputtype, locale, voice, inputtext);
+        verify(mockCache).lookupAudio(inputtype, locale, voice, inputtext);
     }
-    
+
     @Test
     public void canInsertAgain() throws Exception
     {
@@ -115,8 +114,11 @@ public class MaryCacheTest
     {
         c.shutdown();
         c = new MaryCache(maryCacheFile, false);
-        lookupText();
-        lookupAudio();
+        String lookupValue = c.lookupText(inputtype, outputtype, locale, voice, inputtext);
+        assertNotNull(lookupValue);
+        byte[] lookupAudio = c.lookupAudio(inputtype, locale, voice, inputtext);
+        assertNotNull(lookupAudio);
+        assertArrayEquals(targetAudio, lookupAudio);
     }
     
     @Test
